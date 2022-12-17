@@ -1,0 +1,20 @@
+{
+  "name": "@troyv/typewriter",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "dist/typewriter.js",
+  "exports": {
+    ".": "./dist/typewriter.js"
+  },
+  "files": ["dist"],
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build"
+  },
+  "dependencies": {
+    "lit": "^2.5.0"
+  },
+  "devDependencies": {
+    "vite": "^4.0.0"
+  }
+}
