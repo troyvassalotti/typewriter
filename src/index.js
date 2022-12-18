@@ -1,103 +1,91 @@
+import { css, html, LitElement } from "lit";
+import styles from "./index.styles";
+
 /**
- * @file Creates a component for displaying a keyboard typing animation
- * Respects prefers-reduced-motion
+ * @element type-writer
+ * @summary Makes your text appear as if it's being typed in real time. Suppors `prefers-reduced-motion`.
+ *
+ * @slot - Default slot.
+ *
+ * @attr {Boolean} typing - Triggers the typing animation to start.
+ *
+ * @cssprop --kb-cursor-border-size - The width of the cursor.
+ * @cssprop --kb-delay-typing - Typing animation delay.
+ * @cssprop --kb-delay-cursor - Cursor animation delay.
+ * @cssprop --kb-duration-typing - Typing animation duration.
+ * @cssprop --kb-duration-cursor - Cursor animation duration.
+ * @cssprop --kb-count-typing - Typing animation iteration count.
+ * @cssprop --kb-count-cursor - Cursor animation iteration count.
+ * @cssprop --kb-steps-typing - Typing animation timing function steps.
+ * @cssprop --kb-steps-cursor - Cursor animation timing function steps.
  */
+export class Typewriter extends LitElement {
+  static styles = styles;
 
- import { css, html, LitElement } from "lit";
+  static properties = {
+    typing: { type: Boolean, reflect: true },
+  };
 
- export class Typewriter extends LitElement {
-   static get styles() {
-     return [
-       css`
-         * {
-           box-sizing: border-box;
-         }
- 
-         *::after,
-         *::before {
-           box-sizing: inherit;
-         }
- 
-         :host {
-           display: grid;
-           justify-content: start;
-         }
- 
-         ::slotted(*) {
-           border-inline-end: 3px solid transparent;
-           color: inherit;
-           overflow: hidden;
-           white-space: nowrap;
-         }
- 
-         @media (prefers-reduced-motion: no-preference) {
-           ::slotted(*) {
-             animation-delay: var(--kb-delay-typing, 1s), var(--kb-delay-cursor, 0s);
-             animation-direction: normal, normal;
-             animation-duration: var(--kb-duration-typing, 1.5s), var(--kb-duration-cursor, 0.5s);
-             animation-fill-mode: both, none;
-             animation-iteration-count: var(--kb-count-typing, 1), var(--kb-count-cursor, 10);
-             animation-name: kb-typing, kb-cursor;
-             animation-play-state: running, running;
-             animation-timing-function: steps(var(--kb-steps-typing, 25)),
-               steps(var(--kb-steps-cursor, 25));
-           }
-         }
-       `,
-     ];
-   }
- 
-   constructor() {
-     super();
-   }
- 
-   /**
-    * Appends a Light DOM <style> element to allow use of the defined animations
-    * @description kb-typing hammers in the white-space rules to allow for wrapping on small screens but also turning off the wrapping when the animation is done.
-    * @private
-    */
-   _createAnimationStyles() {
-     const animations = document.createElement("style");
- 
-     animations.innerHTML = css`
-       @keyframes kb-typing {
-         0% {
-           inline-size: 0;
-         }
- 
-         99% {
-           inline-size: 100%;
-           white-space: nowrap;
-         }
- 
-         100% {
-           white-space: normal;
-         }
-       }
- 
-       @keyframes kb-cursor {
-         0% {
-           border-inline-end-color: currentColor;
-         }
- 
-         100% {
-           border-inline-end-color: transparent;
-         }
-       }
-     `;
- 
-     this.prepend(animations);
-   }
- 
-   firstUpdated() {
-     this.style.color = "var(--kb-text-color, currentColor)";
-   }
- 
-   render() {
-     this._createAnimationStyles();
-     return html` <slot part="kb-text"></slot>`;
-   }
- }
- 
- customElements.define("type-writer", Typewriter);
- 
+  constructor() {
+    super();
+    this.typing = false;
+  }
+
+  #createAnimationStyles() {
+    const animations = document.createElement("style");
+
+    animations.innerHTML = css`
+      @keyframes kb-typing {
+        0% {
+          inline-size: 0;
+        }
+
+        99% {
+          inline-size: 100%;
+          white-space: nowrap; /* Keep white-space nowrap until the very last minute */
+        }
+
+        100% {
+          white-space: normal;
+        }
+      }
+
+      @keyframes kb-cursor {
+        0% {
+          border-inline-end-color: currentColor;
+        }
+
+        100% {
+          border-inline-end-color: transparent;
+        }
+      }
+    `;
+
+    this.prepend(animations);
+  }
+
+  #startTyping() {
+    this.typing = true;
+  }
+
+  render() {
+    this.#createAnimationStyles();
+    return html` <slot></slot>`;
+  }
+
+  firstUpdated() {
+    const _intersectionObserver = (entries) => {
+      entries.map((entry) => {
+        if (entry.isIntersecting) {
+          this.#startTyping();
+          observer.unobserve(entry.target);
+        }
+      });
+    };
+
+    const observer = new IntersectionObserver(_intersectionObserver);
+    observer.observe(this);
+  }
+}
+
+customElements.define("type-writer", Typewriter);

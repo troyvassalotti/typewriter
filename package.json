@@ -6,10 +6,13 @@
   "exports": {
     ".": "./dist/typewriter.js"
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "dev": "vite",
-    "build": "vite build"
+    "build": "vite build",
+    "format": "npx prettier --write ."
   },
   "dependencies": {
     "lit": "^2.5.0"
