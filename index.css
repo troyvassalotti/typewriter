@@ -8,11 +8,9 @@ html {
 *::before,
 *::after {
   box-sizing: inherit;
+  margin: 0;
 }
 
-body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-block-size: 100vh;
+type-writer:not(:defined) {
+  visibility: hidden;
 }

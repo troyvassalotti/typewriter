@@ -32,7 +32,14 @@ export class Typewriter extends LitElement {
   }
 
   #createAnimationStyles() {
+    const id = "type-writer-styles";
+
+    if (document.getElementById(id)) {
+      return;
+    }
+
     const animations = document.createElement("style");
+    animations.id = id;
 
     animations.innerHTML = css`
       @keyframes kb-typing {
