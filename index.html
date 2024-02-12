@@ -1,11 +1,37 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Typewriter</title>
-    <link rel="stylesheet" href="./index.css" />
-    <script type="module" src="/src/index.js"></script>
+    <title>type-writer</title>
+    <style>
+      html {
+        box-sizing: border-box;
+        color-scheme: light dark;
+        font-family: system-ui;
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: inherit;
+      }
+
+      body {
+        margin: 0;
+      }
+    </style>
+    <link rel="stylesheet" href="./type-writer.css" />
+    <!-- for browsers that don't natively support import maps -->
+    <!-- <script async src="https://esm.sh/es-module-shims"></script> -->
+    <script type="importmap">
+      {
+        "imports": {
+          "lit": "https://esm.sh/lit"
+        }
+      }
+    </script>
+    <script type="module" src="./type-writer.js"></script>
   </head>
   <body>
     <main>

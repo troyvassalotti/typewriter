@@ -2,22 +2,15 @@
   "name": "@troyv/typewriter",
   "version": "2.0.1",
   "type": "module",
-  "main": "dist/typewriter.js",
+  "main": "./type-writer.js",
   "exports": {
-    ".": "./dist/typewriter.js"
+    ".": "./type-writer.js"
   },
-  "files": [
-    "dist"
-  ],
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
+    "start": "npx http-server .",
     "format": "npx prettier --write ."
   },
   "dependencies": {
-    "lit": "^2.5.0"
-  },
-  "devDependencies": {
-    "vite": "^4.5.2"
+    "lit": "^3.1.2"
   }
 }

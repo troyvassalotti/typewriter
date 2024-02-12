@@ -4,9 +4,34 @@ Make your text appear as if it's being typed right before your eyes.
 
 ## Installation
 
-Via npm: `npm install @troyv/typewriter`.
+### Via npm
+
+`npm install @troyv/typewriter`
+
+### Via ESM
+
+```html
+<script type="module">
+  import TypeWriter from "https://esm.sh/@troyv/typewriter";
+</script>
+```
 
 ## Usage
+
+You either need a bundling solution that will handle the bare module imports from `lit` or you need to use import maps in the browser.
+
+```html
+<!-- for browsers that don't natively support import maps -->
+<script async src="https://esm.sh/es-module-shims"></script>
+<script type="importmap">
+  {
+    "imports": {
+      "lit": "https://esm.sh/lit"
+    }
+  }
+</script>
+<script type="module" src="type-writer.js"></script>
+```
 
 This component accepts a default slot of content. It does not respond to `#text` nodes; content should be surrounded by _any_ HTML element.
 
@@ -26,6 +51,8 @@ There is a single boolean prop - `[typing]` - that _should not_ need to be set b
 
 ## Styling
 
+You might want to use `type-writer.css` to hide the component until it is defined to avoid flashes of unstyled (untyped) content.
+
 CSS custom properties are available for altering the animations.
 
 - `--kb-cursor-border-size` - The width of the cursor.
@@ -37,3 +64,5 @@ CSS custom properties are available for altering the animations.
 - `--kb-count-cursor` - Cursor animation iteration count.
 - `--kb-steps-typing` - Typing animation timing function steps.
 - `--kb-steps-cursor` - Cursor animation timing function steps.
+
+The component defaults to `display: grid;` but you can set the `inline` boolean attribute for quickly switching it to `inline-grid`.

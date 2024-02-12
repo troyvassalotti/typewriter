@@ -1,5 +1,4 @@
 import { css, html, LitElement } from "lit";
-import styles from "./index.styles";
 
 /**
  * @element type-writer
@@ -8,6 +7,7 @@ import styles from "./index.styles";
  * @slot - Default slot.
  *
  * @attr {Boolean} typing - Triggers the typing animation to start.
+ * @attr {Boolean} inline - Sets display to inline-grid instead of block-level grid.
  *
  * @cssprop --kb-cursor-border-size - The width of the cursor.
  * @cssprop --kb-delay-typing - Typing animation delay.
@@ -19,17 +19,52 @@ import styles from "./index.styles";
  * @cssprop --kb-steps-typing - Typing animation timing function steps.
  * @cssprop --kb-steps-cursor - Cursor animation timing function steps.
  */
-export class Typewriter extends LitElement {
-  static styles = styles;
-
-  static properties = {
-    typing: { type: Boolean, reflect: true },
-  };
-
+export default class TypeWriter extends LitElement {
   constructor() {
     super();
     this.typing = false;
   }
+
+  static styles = css`
+    :host {
+      display: grid;
+      justify-content: start;
+      visibility: hidden;
+    }
+
+    :host([inline]) {
+      display: inline-grid;
+    }
+
+    :host([typing]) {
+      visibility: visible;
+    }
+
+    :host([typing]) ::slotted(*) {
+      border-inline-end: var(--kb-cursor-border-size, 3px) solid transparent;
+      color: inherit;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+      :host([typing]) ::slotted(*) {
+        animation-delay: var(--kb-delay-typing, 1s), var(--kb-delay-cursor, 0s);
+        animation-direction: normal, normal;
+        animation-duration: var(--kb-duration-typing, 1.5s), var(--kb-duration-cursor, 0.5s);
+        animation-fill-mode: both, none;
+        animation-iteration-count: var(--kb-count-typing, 1), var(--kb-count-cursor, 10);
+        animation-name: kb-typing, kb-cursor;
+        animation-play-state: running, running;
+        animation-timing-function: steps(var(--kb-steps-typing, 25)),
+          steps(var(--kb-steps-cursor, 25));
+      }
+    }
+  `;
+
+  static properties = {
+    typing: { type: Boolean, reflect: true },
+  };
 
   #createAnimationStyles() {
     const id = "type-writer-styles";
@@ -68,23 +103,14 @@ export class Typewriter extends LitElement {
       }
     `;
 
-    this.prepend(animations);
+    document.head.append(animations);
   }
 
-  #startTyping() {
-    this.typing = true;
-  }
-
-  render() {
-    this.#createAnimationStyles();
-    return html` <slot></slot>`;
-  }
-
-  firstUpdated() {
+  #createIntersectionObserver() {
     const _intersectionObserver = (entries) => {
       entries.map((entry) => {
         if (entry.isIntersecting) {
-          this.#startTyping();
+          this.typing = true;
           observer.unobserve(entry.target);
         }
       });
@@ -93,6 +119,16 @@ export class Typewriter extends LitElement {
     const observer = new IntersectionObserver(_intersectionObserver);
     observer.observe(this);
   }
+
+  render() {
+    return html`<slot></slot>`;
+  }
+
+  connectedCallback() {
+    super.connectedCallback();
+    this.#createIntersectionObserver();
+    this.#createAnimationStyles();
+  }
 }
 
-customElements.define("type-writer", Typewriter);
+window.customElements.define("type-writer", TypeWriter);
