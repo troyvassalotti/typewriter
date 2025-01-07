@@ -11,6 +11,6 @@
     "format": "npx prettier --write ."
   },
   "dependencies": {
-    "lit": "^3.1.2"
+    "lit": "^3.2.1"
   }
 }

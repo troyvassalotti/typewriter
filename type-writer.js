@@ -23,6 +23,7 @@ export default class TypeWriter extends LitElement {
   constructor() {
     super();
     this.typing = false;
+    this.typed = false;
   }
 
   static styles = css`
@@ -36,7 +37,8 @@ export default class TypeWriter extends LitElement {
       display: inline-grid;
     }
 
-    :host([typing]) {
+    :host([typing]),
+    :host([typed]) {
       visibility: visible;
     }
 
@@ -64,6 +66,7 @@ export default class TypeWriter extends LitElement {
 
   static properties = {
     typing: { type: Boolean, reflect: true },
+    typed: { type: Boolean, reflect: true },
   };
 
   #createAnimationStyles() {
@@ -110,7 +113,7 @@ export default class TypeWriter extends LitElement {
     const _intersectionObserver = (entries) => {
       entries.map((entry) => {
         if (entry.isIntersecting) {
-          this.typing = true;
+          this.typing = entry.isIntersecting;
           observer.unobserve(entry.target);
         }
       });
@@ -120,8 +123,15 @@ export default class TypeWriter extends LitElement {
     observer.observe(this);
   }
 
+  #animationEnd(event) {
+    if (event.animationName === "kb-cursor") {
+      this.typing = false;
+      this.typed = true;
+    }
+  }
+
   render() {
-    return html`<slot></slot>`;
+    return html`<slot @animationend=${this.#animationEnd}></slot>`;
   }
 
   connectedCallback() {
