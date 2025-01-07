@@ -44,8 +44,8 @@ export default class TypeWriter extends LitElement {
 
     :host([typing]) ::slotted(*) {
       border-inline-end: var(--kb-cursor-border-size, 3px) solid transparent;
-      color: inherit;
-      overflow: hidden;
+      overflow: clip;
+      overflow-block: initial;
       white-space: nowrap;
     }
 
