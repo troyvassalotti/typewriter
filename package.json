@@ -1,6 +1,6 @@
 {
   "name": "@troyv/typewriter",
-  "version": "3.0.2",
+  "version": "3.1.0",
   "type": "module",
   "main": "./type-writer.js",
   "exports": {
